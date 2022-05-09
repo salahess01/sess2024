@@ -26,6 +26,13 @@ clean:
   stage: clean
   script:
     - echo "Cleaning leftovers from previous builds"
+    - mvn clean
+
+build:
+  image: $IMAGE_OPENJDK_MAVEN
+  stage: build
+  script:
+    - mvn  package
 
 static-code-analysis:
   image: $IMAGE_OPENJDK_MAVEN
@@ -50,7 +57,7 @@ coverage-test:
   script:
     - echo "Running coverage tests..."
  
-build:
+build_image:
   stage: build
   environment:
     name: dev
