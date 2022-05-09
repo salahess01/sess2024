@@ -63,6 +63,7 @@ build_image:
     name: dev
     url: https://dev.abc.com
   script:
+    - pwd
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t registry.gitlab.com/bhanuraina/spring-boot-react-ecs .
     - docker push registry.gitlab.com/bhanuraina/spring-boot-react-ecs
