@@ -81,7 +81,7 @@ deploy:
   image: python:latest
   script:
     - pip install awscli
-    - aws ecs update-service --cluster fargate-cluster --service fargate-docker-service --force-new-deployment --region us-east-2
+    - aws ecs update-service --cluster  Cluster01 --service cl01 --force-new-deployment --region us-east-1
   when: manual
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
