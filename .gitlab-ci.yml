@@ -10,23 +10,23 @@ variables:
   DOCKER_DRIVER: overlay2
   IMAGE_OPENJDK_MAVEN: maven:3.8.5-jdk-11
   
-services:
-  - docker:dind
+#services:
+#  - docker:dind
 
 stages:
   - clean
   - build
-  - test
+  #- test
   - build-image
   - publish-image
   - deploy
 
-clean:
-  image: $IMAGE_OPENJDK_MAVEN
-  stage: clean
-  script:
-    - echo "Cleaning leftovers from previous builds"
-    - mvn clean
+#clean:
+#  image: $IMAGE_OPENJDK_MAVEN
+#  stage: clean
+#  script:
+#    - echo "Cleaning leftovers from previous builds"
+#    - mvn clean
 
 build:
   image: $IMAGE_OPENJDK_MAVEN
@@ -34,28 +34,28 @@ build:
   script:
     - mvn  package
 
-static-code-analysis:
-  image: $IMAGE_OPENJDK_MAVEN
-  stage: test
-  script:
-    - echo "Running Static Code Analysis..."
-    - echo "Checking style..."
+#static-code-analysis:
+#  image: $IMAGE_OPENJDK_MAVEN
+#  stage: test
+#  script:
+#    - echo "Running Static Code Analysis..."
+#    - echo "Checking style..."
     
 
-unit-test:
-  image: $IMAGE_OPENJDK_MAVEN
-  stage: test
-  script:
-    - echo "Running unit tests..."
+#unit-test:
+#  image: $IMAGE_OPENJDK_MAVEN
+#  stage: test
+#  script:
+#    - echo "Running unit tests..."
     
 
-coverage-test:
-  image: $IMAGE_OPENJDK_MAVEN
-  stage: test
-  needs:
-    - job: unit-test
-  script:
-    - echo "Running coverage tests..."
+#coverage-test:
+#  image: $IMAGE_OPENJDK_MAVEN
+#  stage: test
+#  needs:
+#    - job: unit-test
+#  script:
+#    - echo "Running coverage tests..."
  
 build_image:
   stage: build-image
