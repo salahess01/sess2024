@@ -3,6 +3,7 @@ image: docker:stable
 variables:
   DOCKER_HOST: tcp://docker:2375/
   DOCKER_DRIVER: overlay2
+  IMAGE_OPENJDK_MAVEN: maven:7.3.3-jdk17-alpine
 
 services:
   - docker:dind
@@ -15,6 +16,35 @@ stages:
   - publish-image
   - deploy
 
+clean:
+  image: $IMAGE_OPENJDK_MAVEN
+  stage: clean
+  script:
+    - echo "Cleaning leftovers from previous builds"
+
+static-code-analysis:
+  image: $IMAGE_OPENJDK_MAVEN
+  stage: test
+  script:
+    - echo "Running Static Code Analysis..."
+    - echo "Checking style..."
+    
+
+unit-test:
+  image: $IMAGE_OPENJDK_GRADLE
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    
+
+coverage-test:
+  image: $IMAGE_OPENJDK_MAVEN
+  stage: test
+  needs:
+    - job: unit-test
+  script:
+    - echo "Running coverage tests..."
+ 
 build:
   stage: build
   environment:
