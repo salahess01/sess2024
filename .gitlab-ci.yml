@@ -11,7 +11,7 @@ variables:
   IMAGE_OPENJDK_MAVEN: maven:3.8.5-jdk-11
   
 #services:
-  - docker:dind
+ # - docker:dind
 
 stages:
   - clean
