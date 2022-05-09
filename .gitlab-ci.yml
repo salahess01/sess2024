@@ -1,4 +1,4 @@
-#image: docker:stable
+image: docker:stable
 workflow:
   rules:
     - if: $CI_COMMIT_TAG
@@ -10,8 +10,8 @@ variables:
   DOCKER_DRIVER: overlay2
   IMAGE_OPENJDK_MAVEN: maven:3.8.5-jdk-11
   
-#services:
- # - docker:dind
+services:
+  - docker:dind
 
 stages:
   - clean
@@ -35,7 +35,7 @@ build:
     - mvn  package
   artifacts:
     paths:
-      - builds/libs/spring-boot-web.jar
+      - target/spring-boot-web.jar
 
 #static-code-analysis:
 #  image: $IMAGE_OPENJDK_MAVEN
