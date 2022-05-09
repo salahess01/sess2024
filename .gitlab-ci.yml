@@ -33,6 +33,9 @@ build:
   stage: build
   script:
     - mvn  package
+  artifacts:
+    paths:
+      - builds/libs/spring-boot-web.jar
 
 #static-code-analysis:
 #  image: $IMAGE_OPENJDK_MAVEN
