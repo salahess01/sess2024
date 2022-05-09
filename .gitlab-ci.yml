@@ -59,9 +59,9 @@ build:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t registry.gitlab.com/bhanuraina/spring-boot-react-ecs .
     - docker push registry.gitlab.com/bhanuraina/spring-boot-react-ecs
-  when: manual
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  #when: manual
+  #rules:
+  #  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 deploy:
   stage: deploy
   environment:
