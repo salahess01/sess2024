@@ -1,0 +1,34 @@
+image: docker:stable
+
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+
+services:
+  - docker:dind
+
+build:
+  stage: build
+  environment:
+    name: dev
+    url: https://dev.abc.com
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $CI_REGISTRY/leningrad/docker-sample:latest .
+    - docker push $CI_REGISTRY/leningrad/docker-sample:latest
+  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+deploy:
+  stage: deploy
+  environment:
+    name: dev
+    url: https://dev.abc.com
+  image: python:latest
+  script:
+    - pip install awscli
+    - aws ecs update-service --cluster fargate-cluster --service fargate-docker-service --force-new-deployment --region us-east-2
+  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
