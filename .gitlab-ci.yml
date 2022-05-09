@@ -58,7 +58,7 @@ coverage-test:
     - echo "Running coverage tests..."
  
 build_image:
-  stage: build_image
+  stage: build-image
   environment:
     name: dev
     url: https://dev.abc.com
