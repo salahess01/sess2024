@@ -7,6 +7,14 @@ variables:
 services:
   - docker:dind
 
+stages:
+  - clean
+  - build
+  - test
+  - build-image
+  - publish-image
+  - deploy
+
 build:
   stage: build
   environment:
