@@ -16,17 +16,17 @@ services:
 stages:
   - clean
   - build
-  #- test
+  - test
   - build-image
   - publish-image
   - deploy
 
-#clean:
-#  image: $IMAGE_OPENJDK_MAVEN
-#  stage: clean
-#  script:
-#    - echo "Cleaning leftovers from previous builds"
-#    - mvn clean
+clean:
+  image: $IMAGE_OPENJDK_MAVEN
+  stage: clean
+  script:
+    - echo "Cleaning leftovers from previous builds"
+    - mvn clean
 
 build:
   image: $IMAGE_OPENJDK_MAVEN
@@ -37,28 +37,28 @@ build:
     paths:
       - target/spring-boot-web.jar
 
-#static-code-analysis:
-#  image: $IMAGE_OPENJDK_MAVEN
-#  stage: test
-#  script:
-#    - echo "Running Static Code Analysis..."
-#    - echo "Checking style..."
+static-code-analysis:
+  image: $IMAGE_OPENJDK_MAVEN
+  stage: test
+  script:
+    - echo "Running Static Code Analysis..."
+    - echo "Checking style..."
     
 
-#unit-test:
-#  image: $IMAGE_OPENJDK_MAVEN
-#  stage: test
-#  script:
-#    - echo "Running unit tests..."
+unit-test:
+  image: $IMAGE_OPENJDK_MAVEN
+  stage: test
+  script:
+    - echo "Running unit tests..."
     
 
-#coverage-test:
-#  image: $IMAGE_OPENJDK_MAVEN
-#  stage: test
-#  needs:
-#    - job: unit-test
-#  script:
-#    - echo "Running coverage tests..."
+coverage-test:
+  image: $IMAGE_OPENJDK_MAVEN
+  stage: test
+  needs:
+    - job: unit-test
+  script:
+    - echo "Running coverage tests..."
  
 build_image:
   stage: build-image
@@ -70,9 +70,9 @@ build_image:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t registry.gitlab.com/bhanuraina/spring-boot-react-ecs:latest .
     - docker push registry.gitlab.com/bhanuraina/spring-boot-react-ecs:latest
-  #when: manual
-  #rules:
-  #  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 deploy:
   stage: deploy
   environment:
