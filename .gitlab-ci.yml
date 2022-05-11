@@ -1,0 +1,88 @@
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+image: docker:stable
+workflow:
+  rules:
+  - if: "$CI_COMMIT_TAG"
+    when: never
+  - if: "$CI_COMMIT_BRANCH == 'master'"
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+  IMAGE_OPENJDK_MAVEN: maven:3.8.5-jdk-11
+services:
+- docker:dind
+stages:
+- clean
+- build
+- test
+- build-image
+- publish-image
+- deploy
+clean:
+  image: "$IMAGE_OPENJDK_MAVEN"
+  stage: clean
+  script:
+  - echo "Cleaning leftovers from previous builds"
+  - mvn clean
+build:
+  image: "$IMAGE_OPENJDK_MAVEN"
+  stage: build
+  script:
+  - mvn  package
+  artifacts:
+    paths:
+    - target/spring-boot-web.jar
+static-code-analysis:
+  image: "$IMAGE_OPENJDK_MAVEN"
+  stage: test
+  script:
+  - echo "Running Static Code Analysis..."
+  - echo "Checking style..."
+unit-test:
+  image: "$IMAGE_OPENJDK_MAVEN"
+  stage: test
+  script:
+  - echo "Running unit tests..."
+coverage-test:
+  image: "$IMAGE_OPENJDK_MAVEN"
+  stage: test
+  needs:
+  - job: unit-test
+  script:
+  - echo "Running coverage tests..."
+build_image:
+  stage: build-image
+  environment:
+    name: dev
+    url: https://dev.abc.com
+  script:
+  - pwd
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker build -t registry.gitlab.com/bhanuraina/spring-boot-react-ecs:latest .
+  - docker push registry.gitlab.com/bhanuraina/spring-boot-react-ecs:latest
+  when: manual
+  rules:
+  - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+deploy:
+  stage: deploy
+  environment:
+    name: dev
+    url: https://dev.abc.com
+  image: python:latest
+  script:
+  - pip install awscli
+  - aws ecs update-service --cluster  Cluster01 --service cl01 --force-new-deployment
+    --region us-east-1
+  when: manual
+  rules:
+  - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+sast:
+  stage: test
+include:
+- template: Security/SAST.gitlab-ci.yml
